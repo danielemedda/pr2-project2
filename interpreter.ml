@@ -188,11 +188,11 @@ let rec eval (e : exp) (r : evT env) : evT =
       (match eval dict r with
       | Valdict v ->
           (* if the key isn't already present, returns a new dictionary in wich is added the element (key, value) *)
-          let rec insert (key : ide) (value : exp) (dict : (ide * evT) list) : (ide * evT) list =
+          let rec insert (key : ide) (value : evT) (dict : (ide * evT) list) : (ide * evT) list =
             match dict with
-            | [] -> (key, eval value r)::[]
+            | [] -> (key, value)::[]
             | (k1, v1)::t -> if (key = k1) then (k1, v1)::t else (k1, v1)::(insert key value t)
-          in Valdict(insert key value v)
+          in Valdict(insert key (eval value r) v)
       | _ -> failwith("not a dictionary"))
   | Delete(dict, key) ->
       (match eval dict r with
